@@ -1,0 +1,125 @@
+<?php
+session_start();
+require_once '../../includes/autoload.php';
+include '../../includes/header.php';
+use classes\util\DBUtil;
+use classes\business\UserManager;
+use classes\entity\User;
+
+$formerror="";
+
+$firstName="";
+$lastName="";
+$email="";
+$password="";
+$comments="";
+
+if(isset($_REQUEST["submitted"])){
+    $firstName=$_REQUEST["firstName"];
+    $lastName=$_REQUEST["lastName"];
+    $email=$_REQUEST["email"];
+    $password=md5($_REQUEST["password"]);
+   // $passsword=password_hash($password, PASSWORD_DEFAULT); //add password_hash
+    
+    if($firstName!='' && $lastName!='' && $email!='' && $password!=''){
+        $UM=new UserManager();
+        $user=new User();
+        $user->firstName=$firstName;
+        $user->lastName=$lastName;
+        $user->email=$email;
+        $user->password=$password;
+        $user->comments=$comments;
+        $user->role="user";                                //add role
+        
+        $existuser=$UM->getUserByEmail($email);
+    
+        if(!isset($existuser)){
+            // Save the Data to Database
+            $UM->saveUser($user);
+            #header("Location:registerthankyou.php");
+            $_SESSION['firstname']=$firstName;            //
+            $_SESSION['lastname']=$lastName;              //
+            
+			echo '<meta http-equiv="Refresh" content="1; url=./registerthankyou.php">';
+        }
+        else{
+            $formerror="User Already Exist";
+        }
+    }else{
+        $formerror="Please fill in the fields";
+    }
+}
+?>
+<link rel="stylesheet" href="..\..\css\pure-release-1.0.0\pure-min.css">
+<link rel="stylesheet" href ="..\..\css\bootstrap.min.css">
+<form name="register.php" method="post" class="pure-form pure-form-stacked">
+	
+<!--<h1>Registration Form</h1>-->
+<div><?=$formerror?></div>
+<div class="container-fluid p-3">
+	<div class="row"> 
+		<div class="col-lg-12">	
+			<h1 style="text-align:center">Registration Form</h1>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-lg-2"> </div>
+		<div class="center-block col-lg-8">
+<div class="jumbotron bg-info" >
+	<div class="row">
+		<div class="col-lg-2"></div>
+		<div class="col-lg-8">
+
+<div class="form-group">
+    <label>First Name</label>
+    <input type="text" class="form-control" name="firstName" value="<?=$firstName?>" pattern="[ A-Za-z]{3,50}" title="First Name should be betweeen 3-50 characters" required placeholder="Enter first name" size="50">
+</div>
+ 
+<div class="form-group">
+    <label>Last Name</label>
+    <input type="text" class="form-control" name="lastName" value="<?=$lastName?>" pattern="[ A-Za-z]{3,50}" title="Last Name should be betweeen 3-50 characters" required placeholder="Enter last name"  >
+</div>  
+  
+<div class="form-group">    
+    <label>Email</label>
+    <input type="email" class="form-control" name="email" value="<?=$email?>" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$" title="Please enter a valid email" required placeholder="example@domain.com"  >
+</div>  
+
+<div class="form-group"> 
+    <label>Password</label>
+  <!--  <input type="password" class="form-control" name="password" value="<?=$password?>"  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}"  title="Password must consist of at least 6 characters with at least one uppercase letter, one lowercase letter and one digit." required placeholder="Password (Min 6 Characters)">-->
+   <input type="password" class="form-control" name="password" value="<?=$password?>"  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$"  title="Password must consist of at least 6 characters with at least one uppercase letter, one lowercase letter and one digit." required placeholder="Password (Min 6 Characters)">
+</div>
+
+
+<div class="form-group"> 
+    <label>Confirm Password</label>
+    <input type="password" class="form-control" name="cpassword" value="<?=$password?>" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$"  title="Password must consist of at least 6 characters with at least one uppercase letter, one lowercase letter and one digit."required placeholder="Confirm Password ( Min 6 Characters)" > 
+</div>  
+    
+<div class="form-group">
+    <label>Comment:</label>
+    <textarea class="form-control" rows="4" cols="50" name="comments" value="<?=$comments?>" required>
+    </textarea>
+</div><br>
+ 
+<div class="form-group">
+   <input class="btn"  type="submit" name="submitted" value="Submit" style="background:#94c120; color:white; width:49%;">
+   <input class="btn"  type="reset" name="reset" value="Reset" style="width:49%;">
+</div>
+
+		</div>
+	</div>
+</div>
+		</div>
+	</div>
+</div>
+</form>
+
+ <?php
+include '../../includes/footer.php';
+?>
+ 
+

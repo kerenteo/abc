@@ -1,0 +1,24 @@
+<?php
+session_start();
+require_once '../../includes/autoload.php';
+include '../../includes/header.php'
+?>
+<link rel="stylesheet" href="..\..\css\pure-release-1.0.0\pure-min.css">
+<link rel="stylesheet" href ="..\..\css\bootstrap.min.css">
+<div class="container-fluid p-3">
+<h1>Title: Thank You</h1>
+<?php
+echo "<h4><br>","Thank you ".$_SESSION['firstname']." ".$_SESSION['lastname'],".","</h4><br>";
+?>
+
+<h4>
+You have successfully registered to community portal<br /><br />
+
+Continue with <a href="../../login.php">login</a>
+
+</h4>
+</div>
+
+<?php
+include '../../includes/footer.php';
+?>
